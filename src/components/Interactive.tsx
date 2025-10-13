@@ -116,7 +116,7 @@ const Interactive: React.FC = () => {
   return (
     <div className="interactive-container">
       <img
-        src="/pages/1/velka-morava.png"
+        src="/pages/1/velka-morava.jpg"
         alt="Background"
         className="background-image"
       />
@@ -130,7 +130,7 @@ const Interactive: React.FC = () => {
           >
             {cell.visible && (
               <img
-                src={`/pages/1/${cell.image === 'strom' ? 'strom.png' : 'medved1.png'}`}
+                src={`/pages/1/${cell.image === 'strom' ? 'strom.jpg' : 'medved1.jpg'}`}
                 alt={cell.image}
                 className="cell-image"
               />
