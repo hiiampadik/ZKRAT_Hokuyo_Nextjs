@@ -24,7 +24,7 @@ const Interactive2: React.FC = () => {
       for (let col = 1; col <= COLS; col++) {
         initialGrid.push({
           id: id++,
-          imageName: `row-${row}-column-${col}.png`,
+          imageName: `row-${row}-column-${col}.jpg`,
           isSwapped: false,
         });
       }
