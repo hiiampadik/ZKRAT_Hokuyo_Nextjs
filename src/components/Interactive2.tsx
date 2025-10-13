@@ -12,6 +12,8 @@ const Interactive2: React.FC = () => {
   const COLS = 8;
 
   const [grid, setGrid] = useState<GridCell[]>([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
 
   // Audio ref for sound effect
   const ruchAudioRef = useRef<HTMLAudioElement>(null);
@@ -31,6 +33,61 @@ const Interactive2: React.FC = () => {
     }
     setGrid(initialGrid);
   }, []);
+
+  // Prefetch all images from both A and B folders
+  useEffect(() => {
+    const imagesToLoad: string[] = [];
+
+    // Add all images from both A and B folders
+    for (let row = 1; row <= ROWS; row++) {
+      for (let col = 1; col <= COLS; col++) {
+        const imageName = `row-${row}-column-${col}.jpg`;
+        imagesToLoad.push(`/pages/2/A/${imageName}`);
+        imagesToLoad.push(`/pages/2/B/${imageName}`);
+      }
+    }
+
+    let loadedCount = 0;
+    const totalImages = imagesToLoad.length;
+
+    const loadImage = (src: string) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            setImagesLoaded(true);
+          }
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${src}`);
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            setImagesLoaded(true);
+          }
+          resolve();
+        };
+        img.src = src;
+      });
+    };
+
+    // Load all images in parallel
+    Promise.all(imagesToLoad.map(loadImage)).then(() => {
+      // All images loaded or failed
+      console.log('All images prefetched');
+    });
+  }, []);
+
+  // Show grid with delay after images are loaded
+  useEffect(() => {
+    if (imagesLoaded) {
+      const timer = setTimeout(() => {
+        setShowGrid(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [imagesLoaded]);
 
   // Cleanup audio element on unmount
   useEffect(() => {
@@ -59,9 +116,14 @@ const Interactive2: React.FC = () => {
       const cell = prevGrid.find(c => c.id === cellId);
       if (!cell) return prevGrid;
 
+      // Only swap from A to B, not back
+      if (cell.isSwapped) {
+        return prevGrid;
+      }
+
       // Create new grid with swapped image
       const newGrid = prevGrid.map(c =>
-        c.id === cellId ? { ...c, isSwapped: !c.isSwapped } : c
+        c.id === cellId ? { ...c, isSwapped: true } : c
       );
 
       // Play sound effect
@@ -94,7 +156,7 @@ const Interactive2: React.FC = () => {
 
   return (
     <div className="interactive2-container">
-      <div className="grid-wrapper">
+      <div className={`grid-wrapper ${showGrid ? 'visible' : ''}`}>
         <div className="grid-container">
           {grid.map((cell) => (
             <div
