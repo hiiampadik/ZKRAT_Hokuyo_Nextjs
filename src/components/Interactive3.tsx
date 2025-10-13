@@ -46,10 +46,11 @@ const Interactive3: React.FC = () => {
 
   // Cleanup audio on unmount
   useEffect(() => {
+    const audio = audioRef.current;
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
+      if (audio) {
+        audio.pause();
+        audio.src = '';
       }
     };
   }, []);

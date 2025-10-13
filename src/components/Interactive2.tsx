@@ -34,10 +34,11 @@ const Interactive2: React.FC = () => {
 
   // Cleanup audio element on unmount
   useEffect(() => {
+    const ruchAudio = ruchAudioRef.current;
     return () => {
-      if (ruchAudioRef.current) {
-        ruchAudioRef.current.pause();
-        ruchAudioRef.current.src = '';
+      if (ruchAudio) {
+        ruchAudio.pause();
+        ruchAudio.src = '';
       }
     };
   }, []);

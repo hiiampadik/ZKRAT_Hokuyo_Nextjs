@@ -55,19 +55,23 @@ const Interactive: React.FC = () => {
 
   // Cleanup audio elements on unmount
   useEffect(() => {
+    const stromAudio = stromAudioRef.current;
+    const medvedAudio = medvedAudioRef.current;
+    const famfaraAudio = famfaraAudioRef.current;
+
     return () => {
       // Pause and clean up audio elements
-      if (stromAudioRef.current) {
-        stromAudioRef.current.pause();
-        stromAudioRef.current.src = '';
+      if (stromAudio) {
+        stromAudio.pause();
+        stromAudio.src = '';
       }
-      if (medvedAudioRef.current) {
-        medvedAudioRef.current.pause();
-        medvedAudioRef.current.src = '';
+      if (medvedAudio) {
+        medvedAudio.pause();
+        medvedAudio.src = '';
       }
-      if (famfaraAudioRef.current) {
-        famfaraAudioRef.current.pause();
-        famfaraAudioRef.current.src = '';
+      if (famfaraAudio) {
+        famfaraAudio.pause();
+        famfaraAudio.src = '';
       }
     };
   }, []);
