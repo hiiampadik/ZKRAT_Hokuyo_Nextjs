@@ -15,6 +15,9 @@ const Interactive2: React.FC = () => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
 
+  // Store prefetched images
+  const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
+
   // Audio ref for sound effect
   const ruchAudioRef = useRef<HTMLAudioElement>(null);
 
@@ -54,6 +57,8 @@ const Interactive2: React.FC = () => {
       return new Promise<void>((resolve) => {
         const img = new Image();
         img.onload = () => {
+          // Store the loaded image in cache
+          imageCache.current.set(src, img);
           loadedCount++;
           if (loadedCount === totalImages) {
             setImagesLoaded(true);
@@ -154,6 +159,32 @@ const Interactive2: React.FC = () => {
     };
   }, [resetGrid]);
 
+  // Creatwe a memoized image component that uses cached images
+  const CachedImage: React.FC<{ cell: GridCell }> = React.memo(({ cell }) => {
+    const src = `/pages/2/${cell.isSwapped ? 'B' : 'A'}/${cell.imageName}`;
+    const cachedImg = imageCache.current.get(src);
+
+    if (cachedImg) {
+      // Use the cached image src to avoid refetching
+      return (
+        <img
+          src={cachedImg.src}
+          alt={`Cell ${cell.id}`}
+          className="cell-image"
+        />
+      );
+    }
+
+    // Fallback to regular img if not in cache
+    return (
+      <img
+        src={src}
+        alt={`Cell ${cell.id}`}
+        className="cell-image"
+      />
+    );
+  });
+
   return (
     <div className="interactive2-container">
       <div className={`grid-wrapper ${showGrid ? 'visible' : ''}`}>
@@ -164,11 +195,7 @@ const Interactive2: React.FC = () => {
               className="grid-cell"
               onClick={() => handleCellClick(cell.id)}
             >
-              <img
-                src={`/pages/2/${cell.isSwapped ? 'B' : 'A'}/${cell.imageName}`}
-                alt={`Cell ${cell.id}`}
-                className="cell-image"
-              />
+              <CachedImage cell={cell} />
             </div>
           ))}
         </div>
