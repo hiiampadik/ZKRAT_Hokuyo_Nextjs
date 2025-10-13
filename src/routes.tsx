@@ -95,6 +95,7 @@ const routeTree = rootRoute.addChildren([
 // Create and export the router
 export const router = createRouter({
   routeTree,
+  basepath: '/',
 });
 
 // Type registration
