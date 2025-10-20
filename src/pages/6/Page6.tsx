@@ -1,9 +1,10 @@
 import React from 'react';
-import './Page6.sass';
+import {useSimulateClick} from '../../hooks/useSimulateClick';
 
 const Page6: React.FC = () => {
+    useSimulateClick()
   return (
-    <div className="page-6">
+    <div>
       <h1>Page 6</h1>
     </div>
   );
