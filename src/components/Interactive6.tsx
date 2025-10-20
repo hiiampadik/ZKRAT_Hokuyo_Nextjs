@@ -18,6 +18,7 @@ const Interactive6: React.FC = () => {
 
   const [tiles, setTiles] = useState<GridTile[]>([]);
   const [clickedCount, setClickedCount] = useState(0);
+  const [musicStarted, setMusicStarted] = useState(false);
   const songAudioRef = useRef<HTMLAudioElement>(null);
   const pleskAudioRef = useRef<HTMLAudioElement>(null);
   const navigate = useNavigate();
@@ -40,15 +41,20 @@ const Interactive6: React.FC = () => {
     setTiles(initialTiles);
   }, []);
 
-  // Start background music
-  useEffect(() => {
-    if (songAudioRef.current) {
+  // Start background music after first video click
+  const startBackgroundMusic = useCallback(() => {
+    if (songAudioRef.current && !musicStarted) {
       songAudioRef.current.volume = 0.5;
-      songAudioRef.current.play().catch(err => {
-        console.warn('Background music autoplay failed:', err);
-      });
+      songAudioRef.current.play()
+        .then(() => {
+          console.log('Background music started');
+          setMusicStarted(true);
+        })
+        .catch(err => {
+          console.warn('Background music play failed:', err);
+        });
     }
-  }, []);
+  }, [musicStarted]);
 
   // Timer to add videos every 3 seconds
   useEffect(() => {
@@ -73,7 +79,7 @@ const Interactive6: React.FC = () => {
             : tile
         );
       });
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -95,6 +101,9 @@ const Interactive6: React.FC = () => {
 
   // Handle video click
   const handleVideoClick = useCallback((tileId: number) => {
+    // Start background music on first click
+    startBackgroundMusic();
+
     playPleskSound();
 
     setTiles(prevTiles =>
@@ -104,6 +113,9 @@ const Interactive6: React.FC = () => {
           : tile
       )
     );
+
+    // Increment clicked count
+    setClickedCount(prev => prev + 1);
 
     // Remove red rectangle after 1 second and mark as clicked
     setTimeout(() => {
@@ -115,7 +127,14 @@ const Interactive6: React.FC = () => {
         )
       );
     }, 1000);
-  }, [playPleskSound]);
+  }, [playPleskSound, startBackgroundMusic]);
+
+  // Check if 20 videos have been clicked and redirect
+  useEffect(() => {
+    if (clickedCount >= 20) {
+      navigate({ to: '/' });
+    }
+  }, [clickedCount, navigate]);
 
   return (
     <div className="interactive6-container">

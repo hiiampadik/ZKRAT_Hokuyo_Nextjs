@@ -8,7 +8,7 @@ const Interactive4: React.FC = () => {
   const playSound = useCallback(() => {
     if (audioRef.current) {
       try {
-        audioRef.current.volume = 1.0;
+        audioRef.current.volume = 0.6;
         audioRef.current.currentTime = 0;
 
         const playPromise = audioRef.current.play();
