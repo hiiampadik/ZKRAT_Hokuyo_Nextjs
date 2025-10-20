@@ -1,0 +1,49 @@
+.interactive6-container
+  width: 100vw
+  height: 100vh
+  background: black
+  display: flex
+  justify-content: center
+  align-items: center
+  overflow: hidden
+
+
+.grid-container
+  display: grid
+  grid-template-columns: repeat(10, 1fr)
+  grid-template-rows: repeat(5, 1fr)
+  width: 100vw
+  height: 100vh
+  padding: 50px
+
+.grid-tile
+  position: relative
+
+  overflow: hidden
+
+.tile-video
+  position: absolute
+  width: 110%
+  height: 110%
+  object-fit: contain
+  object-position: center center
+  cursor: pointer
+  z-index: 10
+
+.red-rectangle
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: red
+  z-index: 20
+
+// Responsive adjustments for smaller screens
+@media (max-width: 768px)
+  .grid-container
+    gap: 0.5px
+
+@media (max-width: 480px)
+  .grid-container
+    gap: 0px

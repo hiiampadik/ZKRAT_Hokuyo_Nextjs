@@ -12,8 +12,6 @@ const Interactive2: React.FC = () => {
   const COLS = 8;
 
   const [grid, setGrid] = useState<GridCell[]>([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [showGrid, setShowGrid] = useState(false);
 
   // Store prefetched images
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -50,38 +48,6 @@ const Interactive2: React.FC = () => {
       }
     }
 
-    let loadedCount = 0;
-    const totalImages = imagesToLoad.length;
-
-    const loadImage = (src: string) => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          // Store the loaded image in cache
-          imageCache.current.set(src, img);
-          loadedCount++;
-          if (loadedCount === totalImages) {
-            setImagesLoaded(true);
-          }
-          resolve();
-        };
-        img.onerror = () => {
-          console.warn(`Failed to load image: ${src}`);
-          loadedCount++;
-          if (loadedCount === totalImages) {
-            setImagesLoaded(true);
-          }
-          resolve();
-        };
-        img.src = src;
-      });
-    };
-
-    // Load all images in parallel
-    Promise.all(imagesToLoad.map(loadImage)).then(() => {
-      // All images loaded or failed
-      console.log('All images prefetched');
-    });
   }, []);
 
   // Cleanup audio element on unmount
@@ -98,7 +64,7 @@ const Interactive2: React.FC = () => {
     if (ruchAudioRef.current) {
       try {
         // Reset and play the original audio element
-        ruchAudioRef.current.volume = 1.0;
+        ruchAudioRef.current.volume = 0.8;
         ruchAudioRef.current.currentTime = 0;
 
         const playPromise = ruchAudioRef.current.play();

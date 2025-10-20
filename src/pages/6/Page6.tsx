@@ -1,11 +1,12 @@
 import React from 'react';
 import {useSimulateClick} from '../../hooks/useSimulateClick';
+import Interactive6 from '../../components/Interactive6';
 
 const Page6: React.FC = () => {
     useSimulateClick()
   return (
     <div>
-      <h1>Page 6</h1>
+      <Interactive6 />
     </div>
   );
 };

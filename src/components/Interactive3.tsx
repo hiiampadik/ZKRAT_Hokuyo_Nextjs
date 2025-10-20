@@ -58,7 +58,7 @@ const Interactive3: React.FC = () => {
     if (audioRef.current) {
       try {
         // Reset and play the original audio element
-        audioRef.current.volume = 1.0;
+        audioRef.current.volume = 0.7;
         audioRef.current.currentTime = 0;
 
         const playPromise = audioRef.current.play();
