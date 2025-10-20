@@ -1,0 +1,70 @@
+import React, { useState, useRef, useCallback } from 'react';
+import './Interactive4.sass';
+
+const Interactive4: React.FC = () => {
+  const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const playSound = useCallback(() => {
+    if (audioRef.current) {
+      try {
+        audioRef.current.volume = 1.0;
+        audioRef.current.currentTime = 0;
+
+        const playPromise = audioRef.current.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Audio played successfully');
+            })
+            .catch(err => {
+              console.error('Audio playback failed:', err);
+            });
+        }
+      } catch (error) {
+        console.error('Error playing audio:', error);
+      }
+    }
+  }, []);
+
+  const handleRectClick = (rectNumber: number) => {
+    setVisibleImages(prev => new Set([...Array.from(prev), rectNumber]));
+    playSound();
+  };
+
+  return (
+      <div className="interactive4-container">
+          <div className="image-container">
+              <img
+                  src="/pages/4/stena-interakce4K.jpg"
+                  alt="Background"
+                  className="background-image"
+              />
+              <div className="rect1" onClick={() => handleRectClick(2)}></div>
+              <div className="rect2" onClick={() => handleRectClick(4)}></div>
+              <div className="rect3" onClick={() => handleRectClick(6)}></div>
+              <div className="rect4" onClick={() => handleRectClick(8)}></div>
+              <div className="rect5" onClick={() => handleRectClick(7)}></div>
+              <div className="rect6" onClick={() => handleRectClick(3)}></div>
+              <div className="rect7" onClick={() => handleRectClick(5)}></div>
+              <div className="rect8" onClick={() => handleRectClick(1)}></div>
+              <div className="rect9" onClick={() => handleRectClick(9)}></div>
+              <div className="rect10" onClick={() => handleRectClick(10)}></div>
+
+              {Array.from(visibleImages).map(imageNumber => (
+                <img
+                  key={imageNumber}
+                  src={`/pages/4/${imageNumber}.png`}
+                  alt={`Overlay ${imageNumber}`}
+                  className="overlay-image"
+                />
+              ))}
+
+              <audio ref={audioRef} src="/pages/4/mapa.mp3" preload="auto" />
+          </div>
+      </div>
+  )
+};
+
+export default Interactive4;

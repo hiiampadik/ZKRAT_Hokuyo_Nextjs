@@ -4,8 +4,6 @@ import {
   createRoute,
   createRouter,
   Outlet,
-  Link,
-  useLocation,
 } from '@tanstack/react-router';
 import Page1 from './pages/1/Page1';
 import Page2 from './pages/2/Page2';
