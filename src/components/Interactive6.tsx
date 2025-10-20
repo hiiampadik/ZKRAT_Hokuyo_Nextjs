@@ -14,7 +14,6 @@ interface GridTile {
 const Interactive6: React.FC = () => {
   const ROWS = 5;
   const COLS = 10;
-  const TOTAL_TILES = ROWS * COLS;
 
   const [tiles, setTiles] = useState<GridTile[]>([]);
   const [clickedCount, setClickedCount] = useState(0);
