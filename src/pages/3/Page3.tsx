@@ -1,10 +1,11 @@
 import React from 'react';
-import './Page3.sass';
 import Interactive3 from '../../components/Interactive3';
+import {useSimulateClick} from '../../hooks/useSimulateClick';
 
 const Page3: React.FC = () => {
+    useSimulateClick()
   return (
-    <div className="page-3">
+    <div>
       <Interactive3 />
     </div>
   );

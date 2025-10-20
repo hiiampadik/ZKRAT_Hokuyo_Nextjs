@@ -1,10 +1,10 @@
 import React from 'react';
-import './Page5.sass';
+import Interactive5 from '../../components/Interactive5';
 
 const Page5: React.FC = () => {
   return (
     <div className="page-5">
-      <h1>Page 5</h1>
+      <Interactive5 />
     </div>
   );
 };

@@ -84,23 +84,11 @@ const Interactive2: React.FC = () => {
     });
   }, []);
 
-  // Show grid with delay after images are loaded
-  useEffect(() => {
-    if (imagesLoaded) {
-      const timer = setTimeout(() => {
-        setShowGrid(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [imagesLoaded]);
-
   // Cleanup audio element on unmount
   useEffect(() => {
-    const ruchAudio = ruchAudioRef.current;
     return () => {
-      if (ruchAudio) {
-        ruchAudio.pause();
-        ruchAudio.src = '';
+      if (ruchAudioRef.current) {
+        ruchAudioRef.current.pause();
       }
     };
   }, []);
@@ -108,10 +96,28 @@ const Interactive2: React.FC = () => {
   // Play sound function
   const playSound = useCallback(() => {
     if (ruchAudioRef.current) {
-      ruchAudioRef.current.currentTime = 0;
-      ruchAudioRef.current.play().catch(err => {
-        console.warn('Audio playback failed:', err);
-      });
+      try {
+        // Reset and play the original audio element
+        ruchAudioRef.current.volume = 1.0;
+        ruchAudioRef.current.currentTime = 0;
+
+        const playPromise = ruchAudioRef.current.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Audio played successfully:', ruchAudioRef.current?.src);
+            })
+            .catch(err => {
+              console.error('Audio playback failed:', err);
+              console.error('Audio src:', ruchAudioRef.current?.src);
+              console.error('Audio readyState:', ruchAudioRef.current?.readyState);
+              console.error('Audio networkState:', ruchAudioRef.current?.networkState);
+            });
+        }
+      } catch (error) {
+        console.error('Error playing audio:', error);
+      }
     }
   }, []);
 
@@ -187,7 +193,7 @@ const Interactive2: React.FC = () => {
 
   return (
     <div className="interactive2-container">
-      <div className={`grid-wrapper ${showGrid ? 'visible' : ''}`}>
+      <div className={`grid-wrapper`}>
         <div className="grid-container">
           {grid.map((cell) => (
             <div

@@ -18,21 +18,9 @@ import { useNumberKeyNavigation } from './hooks/useNumberKeyNavigation';
 // Root layout component
 function RootLayout() {
   useNumberKeyNavigation();
-  const location = useLocation();
-  const isPage3 = location.pathname === '/page3';
 
   return (
     <div>
-      {!isPage3 && (
-        <nav style={{ display: 'flex', gap: '1rem', padding: '1rem', borderBottom: '1px solid #ccc' }}>
-          <Link to="/">Page 1</Link>
-          <Link to="/page2">Page 2</Link>
-          <Link to="/page3">Page 3</Link>
-          <Link to="/page4">Page 4</Link>
-          <Link to="/page5">Page 5</Link>
-          <Link to="/page6">Page 6</Link>
-        </nav>
-      )}
       <main>
         <Outlet />
       </main>

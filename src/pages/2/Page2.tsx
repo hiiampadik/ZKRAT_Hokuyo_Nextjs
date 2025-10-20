@@ -1,10 +1,11 @@
 import React from 'react';
-import './Page2.sass';
 import Interactive2 from '../../components/Interactive2';
+import {useSimulateClick} from '../../hooks/useSimulateClick';
 
 const Page2: React.FC = () => {
+    useSimulateClick()
   return (
-    <div className="page-2">
+    <div>
       <Interactive2 />
     </div>
   );

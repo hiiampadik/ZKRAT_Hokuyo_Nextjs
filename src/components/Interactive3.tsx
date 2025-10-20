@@ -46,11 +46,9 @@ const Interactive3: React.FC = () => {
 
   // Cleanup audio on unmount
   useEffect(() => {
-    const audio = audioRef.current;
     return () => {
-      if (audio) {
-        audio.pause();
-        audio.src = '';
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
     };
   }, []);
@@ -58,10 +56,28 @@ const Interactive3: React.FC = () => {
   // Play sound function
   const playSound = useCallback(() => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(err => {
-        console.warn('Audio playback failed:', err);
-      });
+      try {
+        // Reset and play the original audio element
+        audioRef.current.volume = 1.0;
+        audioRef.current.currentTime = 0;
+
+        const playPromise = audioRef.current.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Audio played successfully:', audioRef.current?.src);
+            })
+            .catch(err => {
+              console.error('Audio playback failed:', err);
+              console.error('Audio src:', audioRef.current?.src);
+              console.error('Audio readyState:', audioRef.current?.readyState);
+              console.error('Audio networkState:', audioRef.current?.networkState);
+            });
+        }
+      } catch (error) {
+        console.error('Error playing audio:', error);
+      }
     }
   }, []);
 
