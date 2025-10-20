@@ -29,8 +29,12 @@ const Interactive4: React.FC = () => {
   }, []);
 
   const handleRectClick = (rectNumber: number) => {
-    setVisibleImages(prev => new Set([...Array.from(prev), rectNumber]));
-    playSound();
+    setVisibleImages(prev => {
+      if (!prev.has(rectNumber)) {
+        playSound();
+      }
+      return new Set([...Array.from(prev), rectNumber]);
+    });
   };
 
   return (
