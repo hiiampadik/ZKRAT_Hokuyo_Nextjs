@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive3.sass';
 
@@ -14,6 +14,7 @@ interface CoinCell {
 const Interactive3: React.FC = () => {
   const [coins, setCoins] = useState<CoinCell[]>([]);
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.7 });
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
   // Initialize coins from each folder
   useEffect(() => {
@@ -45,6 +46,14 @@ const Interactive3: React.FC = () => {
     setCoins(initialCoins);
   }, []);
 
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
+
   // Handle coin click - flip with animation
   const handleCoinClick = useCallback((coinId: string) => {
     setCoins(prevCoins => {
@@ -62,7 +71,7 @@ const Interactive3: React.FC = () => {
       playSound('/pages/3/vrzani.mp3');
 
       // After animation completes, set as flipped
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setCoins(currentCoins =>
           currentCoins.map(c =>
             c.id === coinId
@@ -70,7 +79,10 @@ const Interactive3: React.FC = () => {
               : c
           )
         );
+        timeoutsRef.current.delete(timeoutId);
       }, 1200); // Match animation duration
+
+      timeoutsRef.current.add(timeoutId);
 
       return newCoins;
     });

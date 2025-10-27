@@ -22,6 +22,8 @@ const Interactive6: React.FC = () => {
   const songAudioRef = useRef<HTMLAudioElement>(null);
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.5 });
   const navigate = useNavigate();
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize grid
   useEffect(() => {
@@ -56,9 +58,9 @@ const Interactive6: React.FC = () => {
     }
   }, [musicStarted]);
 
-  // Timer to add videos every 3 seconds
+  // Timer to add videos every 1 second
   useEffect(() => {
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setTiles(prevTiles => {
         const emptyTiles = prevTiles.filter(tile => !tile.hasVideo && !tile.isClicked);
         if (emptyTiles.length === 0) return prevTiles;
@@ -68,20 +70,18 @@ const Interactive6: React.FC = () => {
 
         return prevTiles.map(tile =>
           tile.id === randomTile.id
-            ? {
-                ...tile,
-                hasVideo: true,
-                videoPosition: {
-                  x: Math.random() * 10, // Random position within tile
-                  y: Math.random() * 10
-                }
-              }
+            ? { ...tile, hasVideo: true }
             : tile
         );
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
   }, []);
 
 
@@ -104,7 +104,7 @@ const Interactive6: React.FC = () => {
     setClickedCount(prev => prev + 1);
 
     // Remove red rectangle after 1 second and mark as clicked
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setTiles(prevTiles =>
         prevTiles.map(tile =>
           tile.id === tileId
@@ -112,7 +112,10 @@ const Interactive6: React.FC = () => {
             : tile
         )
       );
+      timeoutsRef.current.delete(timeoutId);
     }, 1000);
+
+    timeoutsRef.current.add(timeoutId);
   }, [playSound, startBackgroundMusic]);
 
   // Check if 20 videos have been clicked and redirect
@@ -121,6 +124,17 @@ const Interactive6: React.FC = () => {
       navigate({ to: '/' });
     }
   }, [clickedCount, navigate]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      timeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
 
   return (
     <div className="interactive6-container">
