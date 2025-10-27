@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive5.sass';
 
 interface PyramidImage {
@@ -11,7 +12,7 @@ interface PyramidImage {
 
 const Interactive5: React.FC = () => {
   const [images, setImages] = useState<PyramidImage[]>([]);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
 
   // Initialize pyramid structure
   useEffect(() => {
@@ -43,11 +44,8 @@ const Interactive5: React.FC = () => {
       const clickedImage = prevImages.find(img => img.id === imageId);
 
       // Play audio only when clicking on hidden images (isVisible is false)
-      if (clickedImage && !clickedImage.isVisible && audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(err => {
-          console.warn('Audio playback failed:', err);
-        });
+      if (clickedImage && !clickedImage.isVisible) {
+        playSound('/pages/5/cihla.mp3');
       }
 
       return prevImages.map(img =>
@@ -115,7 +113,6 @@ const Interactive5: React.FC = () => {
           </div>
         ))}
       </div>
-      <audio ref={audioRef} src="/pages/5/cihla.mp3" preload="auto" />
     </div>
   );
 };

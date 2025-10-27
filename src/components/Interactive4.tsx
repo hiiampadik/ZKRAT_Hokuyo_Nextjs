@@ -1,37 +1,15 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive4.sass';
 
 const Interactive4: React.FC = () => {
   const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const playSound = useCallback(() => {
-    if (audioRef.current) {
-      try {
-        audioRef.current.volume = 0.6;
-        audioRef.current.currentTime = 0;
-
-        const playPromise = audioRef.current.play();
-
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Audio played successfully');
-            })
-            .catch(err => {
-              console.error('Audio playback failed:', err);
-            });
-        }
-      } catch (error) {
-        console.error('Error playing audio:', error);
-      }
-    }
-  }, []);
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.6 });
 
   const handleRectClick = (rectNumber: number) => {
     setVisibleImages(prev => {
       if (!prev.has(rectNumber)) {
-        playSound();
+        playSound('/pages/4/mapa.mp3');
       }
       return new Set([...Array.from(prev), rectNumber]);
     });
@@ -64,8 +42,6 @@ const Interactive4: React.FC = () => {
                   className="overlay-image"
                 />
               ))}
-
-              <audio ref={audioRef} src="/pages/4/mapa.mp3" preload="auto" />
           </div>
       </div>
   )

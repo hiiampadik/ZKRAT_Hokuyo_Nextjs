@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive3.sass';
 
 interface CoinCell {
@@ -12,7 +13,7 @@ interface CoinCell {
 
 const Interactive3: React.FC = () => {
   const [coins, setCoins] = useState<CoinCell[]>([]);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.7 });
 
   // Initialize coins from each folder
   useEffect(() => {
@@ -44,43 +45,6 @@ const Interactive3: React.FC = () => {
     setCoins(initialCoins);
   }, []);
 
-  // Cleanup audio on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
-  }, []);
-
-  // Play sound function
-  const playSound = useCallback(() => {
-    if (audioRef.current) {
-      try {
-        // Reset and play the original audio element
-        audioRef.current.volume = 0.7;
-        audioRef.current.currentTime = 0;
-
-        const playPromise = audioRef.current.play();
-
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Audio played successfully:', audioRef.current?.src);
-            })
-            .catch(err => {
-              console.error('Audio playback failed:', err);
-              console.error('Audio src:', audioRef.current?.src);
-              console.error('Audio readyState:', audioRef.current?.readyState);
-              console.error('Audio networkState:', audioRef.current?.networkState);
-            });
-        }
-      } catch (error) {
-        console.error('Error playing audio:', error);
-      }
-    }
-  }, []);
-
   // Handle coin click - flip with animation
   const handleCoinClick = useCallback((coinId: string) => {
     setCoins(prevCoins => {
@@ -95,7 +59,7 @@ const Interactive3: React.FC = () => {
       );
 
       // Play sound
-      playSound();
+      playSound('/pages/3/vrzani.mp3');
 
       // After animation completes, set as flipped
       setTimeout(() => {
@@ -161,8 +125,6 @@ const Interactive3: React.FC = () => {
             </div>
           </div>
         ))}
-
-      <audio ref={audioRef} src="/pages/3/vrzani.mp3" preload="auto" />
     </div>
   );
 };

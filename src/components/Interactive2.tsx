@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive2.sass';
 
 interface GridCell {
@@ -16,8 +17,8 @@ const Interactive2: React.FC = () => {
   // Store prefetched images
   const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
 
-  // Audio ref for sound effect
-  const ruchAudioRef = useRef<HTMLAudioElement>(null);
+  // Use audio pool hook for sound playback
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.8 });
 
   // Initialize grid with images from folder A
   useEffect(() => {
@@ -50,43 +51,6 @@ const Interactive2: React.FC = () => {
 
   }, []);
 
-  // Cleanup audio element on unmount
-  useEffect(() => {
-    return () => {
-      if (ruchAudioRef.current) {
-        ruchAudioRef.current.pause();
-      }
-    };
-  }, []);
-
-  // Play sound function
-  const playSound = useCallback(() => {
-    if (ruchAudioRef.current) {
-      try {
-        // Reset and play the original audio element
-        ruchAudioRef.current.volume = 0.8;
-        ruchAudioRef.current.currentTime = 0;
-
-        const playPromise = ruchAudioRef.current.play();
-
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Audio played successfully:', ruchAudioRef.current?.src);
-            })
-            .catch(err => {
-              console.error('Audio playback failed:', err);
-              console.error('Audio src:', ruchAudioRef.current?.src);
-              console.error('Audio readyState:', ruchAudioRef.current?.readyState);
-              console.error('Audio networkState:', ruchAudioRef.current?.networkState);
-            });
-        }
-      } catch (error) {
-        console.error('Error playing audio:', error);
-      }
-    }
-  }, []);
-
   // Handle cell click - swap image and play sound
   const handleCellClick = useCallback((cellId: number) => {
     setGrid(prevGrid => {
@@ -104,7 +68,7 @@ const Interactive2: React.FC = () => {
       );
 
       // Play sound effect
-      playSound();
+      playSound('/pages/2/ruch.mp3');
 
       return newGrid;
     });
@@ -172,8 +136,6 @@ const Interactive2: React.FC = () => {
           ))}
         </div>
       </div>
-
-      <audio ref={ruchAudioRef} src="/pages/2/ruch.mp3" preload="auto" />
     </div>
   );
 };

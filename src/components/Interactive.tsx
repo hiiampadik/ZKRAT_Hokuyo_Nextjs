@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive.sass';
 
 interface GridCell {
@@ -14,10 +15,13 @@ const Interactive: React.FC = () => {
 
   const [grid, setGrid] = useState<GridCell[]>([]);
 
-  // Use single refs to prevent recreation on each render
-  const stromAudioRef = useRef<HTMLAudioElement>(null);
-  const medvedAudioRef = useRef<HTMLAudioElement>(null);
-  const famfaraAudioRef = useRef<HTMLAudioElement>(null);
+  // Use audio pool hook for overlapping sound playback
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
+
+  // Audio file paths
+  const stromAudioSrc = '/pages/1/strom.mp3';
+  const medvedAudioSrc = '/pages/1/medved.mp3';
+  const famfaraAudioSrc = '/pages/1/famfara.mp3';
 
   // Initialize grid only once
   useEffect(() => {
@@ -53,50 +57,6 @@ const Interactive: React.FC = () => {
     };
   }, [resetGrid]);
 
-  // Cleanup audio elements on unmount
-  useEffect(() => {
-    return () => {
-      // Pause audio elements on unmount
-      if (stromAudioRef.current) {
-        stromAudioRef.current.pause();
-      }
-      if (medvedAudioRef.current) {
-        medvedAudioRef.current.pause();
-      }
-      if (famfaraAudioRef.current) {
-        famfaraAudioRef.current.pause();
-      }
-    };
-  }, []);
-
-  // Memoized play sound function
-  const playSound = useCallback((audioRef: React.RefObject<HTMLAudioElement | null>) => {
-    if (audioRef.current) {
-      try {
-        // Reset and play the original audio element
-        audioRef.current.volume = 0.4;
-        audioRef.current.currentTime = 0;
-
-        const playPromise = audioRef.current.play();
-
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Audio played successfully:', audioRef.current?.src);
-            })
-            .catch(err => {
-              console.error('Audio playback failed:', err);
-              console.error('Audio src:', audioRef.current?.src);
-              console.error('Audio readyState:', audioRef.current?.readyState);
-              console.error('Audio networkState:', audioRef.current?.networkState);
-            });
-        }
-      } catch (error) {
-        console.error('Error playing audio:', error);
-      }
-    }
-  }, []);
-
   // Optimized click handler with useCallback
   const handleCellClick = useCallback((cellId: number) => {
     setGrid(prevGrid => {
@@ -112,16 +72,16 @@ const Interactive: React.FC = () => {
 
       // Play appropriate sound
       if (newVisibleCount === 0) {
-        playSound(famfaraAudioRef);
+        playSound(famfaraAudioSrc);
       } else if (cell.image === 'strom') {
-        playSound(stromAudioRef);
+        playSound(stromAudioSrc);
       } else {
-        playSound(medvedAudioRef);
+        playSound(medvedAudioSrc);
       }
 
       return newGrid;
     });
-  }, [playSound]);
+  }, [playSound, stromAudioSrc, medvedAudioSrc, famfaraAudioSrc]);
 
   return (
     <div className="interactive-container">
@@ -148,10 +108,6 @@ const Interactive: React.FC = () => {
           </div>
         ))}
       </div>
-
-      <audio ref={stromAudioRef} src="/pages/1/strom.mp3" preload="auto" />
-      <audio ref={medvedAudioRef} src="/pages/1/medved.mp3" preload="auto" />
-      <audio ref={famfaraAudioRef} src="/pages/1/famfara.mp3" preload="auto" />
     </div>
   );
 };

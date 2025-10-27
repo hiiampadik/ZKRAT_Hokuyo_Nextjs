@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useAudioPool } from '../hooks/useAudioPool';
 import './Interactive6.sass';
 
 interface GridTile {
@@ -19,7 +20,7 @@ const Interactive6: React.FC = () => {
   const [clickedCount, setClickedCount] = useState(0);
   const [musicStarted, setMusicStarted] = useState(false);
   const songAudioRef = useRef<HTMLAudioElement>(null);
-  const pleskAudioRef = useRef<HTMLAudioElement>(null);
+  const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.5 });
   const navigate = useNavigate();
 
   // Initialize grid
@@ -83,27 +84,13 @@ const Interactive6: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Play plesk sound
-  const playPleskSound = useCallback(() => {
-    if (pleskAudioRef.current) {
-      try {
-        pleskAudioRef.current.volume = 0.5;
-        pleskAudioRef.current.currentTime = 0;
-        pleskAudioRef.current.play().catch(err => {
-          console.error('Plesk audio playback failed:', err);
-        });
-      } catch (error) {
-        console.error('Error playing plesk audio:', error);
-      }
-    }
-  }, []);
 
   // Handle video click
   const handleVideoClick = useCallback((tileId: number) => {
     // Start background music on first click
     startBackgroundMusic();
 
-    playPleskSound();
+    playSound('/pages/6/plesk.mp3');
 
     setTiles(prevTiles =>
       prevTiles.map(tile =>
@@ -126,7 +113,7 @@ const Interactive6: React.FC = () => {
         )
       );
     }, 1000);
-  }, [playPleskSound, startBackgroundMusic]);
+  }, [playSound, startBackgroundMusic]);
 
   // Check if 20 videos have been clicked and redirect
   useEffect(() => {
@@ -161,7 +148,6 @@ const Interactive6: React.FC = () => {
 
       {/* Audio elements */}
       <audio ref={songAudioRef} src="/pages/6/song.mp3" loop preload="auto" />
-      <audio ref={pleskAudioRef} src="/pages/6/plesk.mp3" preload="auto" />
     </div>
   );
 };
