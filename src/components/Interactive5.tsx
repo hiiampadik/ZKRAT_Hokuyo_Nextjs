@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import './Interactive5.sass';
 
 interface PyramidImage {
@@ -11,6 +11,7 @@ interface PyramidImage {
 
 const Interactive5: React.FC = () => {
   const [images, setImages] = useState<PyramidImage[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Initialize pyramid structure
   useEffect(() => {
@@ -38,11 +39,21 @@ const Interactive5: React.FC = () => {
 
   // Handle image click
   const handleImageClick = useCallback((imageId: number) => {
-    setImages(prevImages =>
-      prevImages.map(img =>
+    setImages(prevImages => {
+      const clickedImage = prevImages.find(img => img.id === imageId);
+
+      // Play audio only when clicking on hidden images (isVisible is false)
+      if (clickedImage && !clickedImage.isVisible && audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(err => {
+          console.warn('Audio playback failed:', err);
+        });
+      }
+
+      return prevImages.map(img =>
         img.id === imageId ? { ...img, isVisible: true } : img
-      )
-    );
+      );
+    });
   }, []);
 
   // Reset function for R key
@@ -104,6 +115,7 @@ const Interactive5: React.FC = () => {
           </div>
         ))}
       </div>
+      <audio ref={audioRef} src="/pages/5/cihla.mp3" preload="auto" />
     </div>
   );
 };

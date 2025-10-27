@@ -153,7 +153,7 @@ const Interactive6: React.FC = () => {
               </video>
             )}
             {tile.showRedRectangle && (
-              <div className="red-rectangle" />
+              <img src="/pages/6/cakanec.png" alt="Cakanec" className="cakanec-image" />
             )}
           </div>
         ))}
