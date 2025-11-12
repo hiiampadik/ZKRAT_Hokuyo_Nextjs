@@ -1,10 +1,20 @@
 import React, { useState, useCallback } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive4.sass';
 
 const Interactive4: React.FC = () => {
   const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.6 });
+
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
+
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
 
   const handleRectClick = (rectNumber: number) => {
     setVisibleImages(prev => {
@@ -17,7 +27,7 @@ const Interactive4: React.FC = () => {
 
   return (
       <div className="interactive4-container">
-          <div className="image-container">
+          <div className="image-container" onClick={handleContainerClick}>
               <img
                   src="/pages/4/stena-interakce4K.jpg"
                   alt="Background"
@@ -40,6 +50,15 @@ const Interactive4: React.FC = () => {
                   src={`/pages/4/${imageNumber}.png`}
                   alt={`Overlay ${imageNumber}`}
                   className="overlay-image"
+                />
+              ))}
+
+              {/* Click animations */}
+              {clickAnimations.map((animation) => (
+                <ClickAnimation
+                  key={animation.id}
+                  x={animation.x}
+                  y={animation.y}
                 />
               ))}
           </div>

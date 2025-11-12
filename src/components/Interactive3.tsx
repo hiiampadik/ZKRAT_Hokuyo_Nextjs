@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive3.sass';
 
 interface CoinCell {
@@ -15,6 +17,9 @@ const Interactive3: React.FC = () => {
   const [coins, setCoins] = useState<CoinCell[]>([]);
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.7 });
   const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
 
   // Initialize coins from each folder
   useEffect(() => {
@@ -53,6 +58,11 @@ const Interactive3: React.FC = () => {
       timeoutsRef.current.clear();
     };
   }, []);
+
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
 
   // Handle coin click - flip with animation
   const handleCoinClick = useCallback((coinId: string) => {
@@ -114,7 +124,7 @@ const Interactive3: React.FC = () => {
   }, [resetCoins]);
 
   return (
-    <div className="interactive3-container">
+    <div className="interactive3-container" onClick={handleContainerClick}>
         {coins.map((coin) => (
           <div
             key={coin.id}
@@ -136,6 +146,15 @@ const Interactive3: React.FC = () => {
               </div>
             </div>
           </div>
+        ))}
+
+        {/* Click animations */}
+        {clickAnimations.map((animation) => (
+          <ClickAnimation
+            key={animation.id}
+            x={animation.x}
+            y={animation.y}
+          />
         ))}
     </div>
   );

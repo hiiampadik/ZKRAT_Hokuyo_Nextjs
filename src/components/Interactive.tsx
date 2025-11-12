@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive.sass';
 
 interface GridCell {
@@ -17,6 +19,9 @@ const Interactive: React.FC = () => {
 
   // Use audio pool hook for overlapping sound playback
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
+
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
 
   // Audio file paths
   const stromAudioSrc = '/pages/1/strom.mp3';
@@ -57,6 +62,11 @@ const Interactive: React.FC = () => {
     };
   }, [resetGrid]);
 
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
+
   // Optimized click handler with useCallback
   const handleCellClick = useCallback((cellId: number) => {
     setGrid(prevGrid => {
@@ -91,7 +101,7 @@ const Interactive: React.FC = () => {
         className="background-image"
       />
 
-      <div className="grid-container">
+      <div className="grid-container" onClick={handleContainerClick}>
         {grid.map((cell) => (
           <div
             key={cell.id}
@@ -106,6 +116,15 @@ const Interactive: React.FC = () => {
               />
             )}
           </div>
+        ))}
+
+        {/* Click animations */}
+        {clickAnimations.map((animation) => (
+          <ClickAnimation
+            key={animation.id}
+            x={animation.x}
+            y={animation.y}
+          />
         ))}
       </div>
     </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive6.sass';
 
 interface GridTile {
@@ -22,6 +24,9 @@ const Interactive6: React.FC = () => {
   const songAudioRef = useRef<HTMLAudioElement>(null);
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.5 });
   const navigate = useNavigate();
+
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
   const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -85,6 +90,11 @@ const Interactive6: React.FC = () => {
   }, []);
 
 
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
+
   // Handle video click
   const handleVideoClick = useCallback((tileId: number) => {
     // Start background music on first click
@@ -137,7 +147,7 @@ const Interactive6: React.FC = () => {
   }, []);
 
   return (
-    <div className="interactive6-container">
+    <div className="interactive6-container" onClick={handleContainerClick}>
       <div className="grid-container">
         {tiles.map((tile) => (
           <div key={tile.id} className="grid-tile">
@@ -157,6 +167,15 @@ const Interactive6: React.FC = () => {
               <img src="/pages/6/cakanec.png" alt="Cakanec" className="cakanec-image" />
             )}
           </div>
+        ))}
+
+        {/* Click animations */}
+        {clickAnimations.map((animation) => (
+          <ClickAnimation
+            key={animation.id}
+            x={animation.x}
+            y={animation.y}
+          />
         ))}
       </div>
 

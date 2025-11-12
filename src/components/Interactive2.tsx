@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive2.sass';
 
 interface GridCell {
@@ -17,6 +19,9 @@ const Interactive2: React.FC = () => {
   // Use audio pool hook for sound playback
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.8 });
 
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
+
   // Initialize grid with images from folder A
   useEffect(() => {
     const initialGrid: GridCell[] = [];
@@ -32,6 +37,11 @@ const Interactive2: React.FC = () => {
     }
     setGrid(initialGrid);
   }, []);
+
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
 
   // Handle cell click - swap image and play sound
   const handleCellClick = useCallback((cellId: number) => {
@@ -49,8 +59,8 @@ const Interactive2: React.FC = () => {
         c.id === cellId ? { ...c, isSwapped: true } : c
       );
 
-      // Play sound effect
-      playSound('/pages/2/ruch.mp3');
+      // Play sound effect - play the same number as the cell ID (1-based)
+      playSound(`/pages/2/sounds/${cellId + 1}.mp3`);
 
       return newGrid;
     });
@@ -79,7 +89,7 @@ const Interactive2: React.FC = () => {
 
 
   return (
-    <div className="interactive2-container">
+    <div className="interactive2-container" onClick={handleContainerClick}>
       <div className={`grid-wrapper`}>
         <div className="grid-container">
           {grid.map((cell) => (
@@ -94,6 +104,15 @@ const Interactive2: React.FC = () => {
                 className="cell-image"
               />
             </div>
+          ))}
+
+          {/* Click animations */}
+          {clickAnimations.map((animation) => (
+            <ClickAnimation
+              key={animation.id}
+              x={animation.x}
+              y={animation.y}
+            />
           ))}
         </div>
       </div>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAudioPool } from '../hooks/useAudioPool';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import ClickAnimation from './ClickAnimation';
 import './Interactive5.sass';
 
 interface PyramidImage {
@@ -13,6 +15,9 @@ interface PyramidImage {
 const Interactive5: React.FC = () => {
   const [images, setImages] = useState<PyramidImage[]>([]);
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
+
+  // Use click animation hook
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
 
   // Initialize pyramid structure
   useEffect(() => {
@@ -38,6 +43,11 @@ const Interactive5: React.FC = () => {
     setImages(pyramidImages);
   }, []);
 
+  // General click handler for animation
+  const handleContainerClick = useCallback((event: React.MouseEvent) => {
+    addClickAnimation(event);
+  }, [addClickAnimation]);
+
   // Handle image click
   const handleImageClick = useCallback((imageId: number) => {
     setImages(prevImages => {
@@ -52,7 +62,7 @@ const Interactive5: React.FC = () => {
         img.id === imageId ? { ...img, isVisible: true } : img
       );
     });
-  }, []);
+  }, [playSound]);
 
   // Reset function for R key
   const resetImages = useCallback(() => {
@@ -85,7 +95,7 @@ const Interactive5: React.FC = () => {
   }, {} as Record<number, PyramidImage[]>);
 
   return (
-    <div className="interactive5-container">
+    <div className="interactive5-container" onClick={handleContainerClick}>
       <div className="video-container">
         <video autoPlay loop muted playsInline>
           <source src="/pages/5/otaznik1.mp4" type="video/mp4" />
@@ -111,6 +121,15 @@ const Interactive5: React.FC = () => {
               </div>
             ))}
           </div>
+        ))}
+
+        {/* Click animations */}
+        {clickAnimations.map((animation) => (
+          <ClickAnimation
+            key={animation.id}
+            x={animation.x}
+            y={animation.y}
+          />
         ))}
       </div>
     </div>
