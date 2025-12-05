@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
 import ClickAnimation from './ClickAnimation';
@@ -6,6 +7,7 @@ import './Interactive4.sass';
 
 const Interactive4: React.FC = () => {
   const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
+  const navigate = useNavigate();
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.6 });
 
   // Use click animation hook
@@ -24,6 +26,15 @@ const Interactive4: React.FC = () => {
       return new Set([...Array.from(prev), rectNumber]);
     });
   };
+
+  // Check if all 10 images are visible and navigate
+  useEffect(() => {
+    if (visibleImages.size === 10) {
+      setTimeout(() => {
+        navigate({ to: '/video5' });
+      }, 500);
+    }
+  }, [visibleImages, navigate]);
 
   return (
       <div className="interactive4-container">

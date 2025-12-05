@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
 import ClickAnimation from './ClickAnimation';
@@ -14,6 +15,7 @@ interface PyramidImage {
 
 const Interactive5: React.FC = () => {
   const [images, setImages] = useState<PyramidImage[]>([]);
+  const navigate = useNavigate();
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
 
   // Use click animation hook
@@ -58,11 +60,21 @@ const Interactive5: React.FC = () => {
         playSound('/pages/5/cihla.mp3');
       }
 
-      return prevImages.map(img =>
+      const updatedImages = prevImages.map(img =>
         img.id === imageId ? { ...img, isVisible: true } : img
       );
+
+      // Check if all 20 images are visible
+      const allVisible = updatedImages.every(img => img.isVisible);
+      if (allVisible) {
+        setTimeout(() => {
+          navigate({ to: '/video6' });
+        }, 500);
+      }
+
+      return updatedImages;
     });
-  }, [playSound]);
+  }, [playSound, navigate]);
 
   // Reset function for R key
   const resetImages = useCallback(() => {

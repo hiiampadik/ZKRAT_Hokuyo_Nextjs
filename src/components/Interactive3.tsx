@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
 import ClickAnimation from './ClickAnimation';
@@ -15,6 +16,7 @@ interface CoinCell {
 
 const Interactive3: React.FC = () => {
   const [coins, setCoins] = useState<CoinCell[]>([]);
+  const navigate = useNavigate();
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.7 });
   const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
@@ -82,13 +84,24 @@ const Interactive3: React.FC = () => {
 
       // After animation completes, set as flipped
       const timeoutId = setTimeout(() => {
-        setCoins(currentCoins =>
-          currentCoins.map(c =>
+        setCoins(currentCoins => {
+          const updatedCoins = currentCoins.map(c =>
             c.id === coinId
               ? { ...c, isFlipped: true, isFlipping: false }
               : c
-          )
-        );
+          );
+
+          // Check if all coins are flipped
+          const allFlipped = updatedCoins.every(c => c.isFlipped);
+          if (allFlipped) {
+            // Navigate after a short delay
+            setTimeout(() => {
+              navigate({ to: '/video4' });
+            }, 500);
+          }
+
+          return updatedCoins;
+        });
         timeoutsRef.current.delete(timeoutId);
       }, 1200); // Match animation duration
 
@@ -96,7 +109,7 @@ const Interactive3: React.FC = () => {
 
       return newCoins;
     });
-  }, [playSound]);
+  }, [playSound, navigate]);
 
   // Reset function for R key
   const resetCoins = useCallback(() => {

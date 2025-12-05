@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
 import ClickAnimation from './ClickAnimation';
@@ -16,6 +17,8 @@ const Interactive: React.FC = () => {
   const TOTAL_CELLS = ROWS * COLS;
 
   const [grid, setGrid] = useState<GridCell[]>([]);
+  const navigate = useNavigate();
+  const famfaraAudioRef = useRef<HTMLAudioElement | null>(null);
 
   // Use audio pool hook for overlapping sound playback
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.4 });
@@ -82,7 +85,17 @@ const Interactive: React.FC = () => {
 
       // Play appropriate sound
       if (newVisibleCount === 0) {
-        playSound(famfaraAudioSrc);
+        // Create audio element for famfara to track when it ends
+        const audio = new Audio(famfaraAudioSrc);
+        audio.volume = 0.4;
+        audio.play().catch(err => console.error('Audio play failed:', err));
+
+        // Navigate to video2 after famfara finishes
+        audio.addEventListener('ended', () => {
+          navigate({ to: '/video2' });
+        });
+
+        famfaraAudioRef.current = audio;
       } else if (cell.image === 'strom') {
         playSound(stromAudioSrc);
       } else {
@@ -91,7 +104,7 @@ const Interactive: React.FC = () => {
 
       return newGrid;
     });
-  }, [playSound, stromAudioSrc, medvedAudioSrc, famfaraAudioSrc]);
+  }, [playSound, stromAudioSrc, medvedAudioSrc, famfaraAudioSrc, navigate]);
 
   return (
     <div className="interactive-container">

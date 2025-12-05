@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
 import ClickAnimation from './ClickAnimation';
@@ -13,8 +14,10 @@ interface GridCell {
 const Interactive2: React.FC = () => {
   const ROWS = 4;
   const COLS = 8;
+  const TOTAL_CELLS = ROWS * COLS;
 
   const [grid, setGrid] = useState<GridCell[]>([]);
+  const navigate = useNavigate();
 
   // Use audio pool hook for sound playback
   const { playSound } = useAudioPool({ maxPoolSize: 5, volume: 0.8 });
@@ -62,9 +65,18 @@ const Interactive2: React.FC = () => {
       // Play sound effect - play the same number as the cell ID (1-based)
       playSound(`/pages/2/sounds/${cellId + 1}.mp3`);
 
+      // Check if all images are swapped
+      const allSwapped = newGrid.every(c => c.isSwapped);
+      if (allSwapped) {
+        // Small delay before navigation to let the last sound play
+        setTimeout(() => {
+          navigate({ to: '/video3' });
+        }, 500);
+      }
+
       return newGrid;
     });
-  }, [playSound]);
+  }, [playSound, navigate]);
 
   // Reset function for R key
   const resetGrid = useCallback(() => {
