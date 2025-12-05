@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import {useClickAnimation} from '../hooks/useClickAnimation';
+import {useSimulateClick} from '../hooks/useSimulateClick';
 
 interface VideoPlayerProps {
   videoSrc: string;
@@ -15,6 +17,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isWaitingForClick, setIsWaitingForClick] = useState(requireClick);
+
+  // useSimulateClick()
 
   useEffect(() => {
     const video = videoRef.current;
@@ -39,7 +43,24 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, [navigate, nextRoute, requireClick]);
 
-  const handleClick = () => {
+  useEffect(() => {
+    if (!requireClick) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft' && isWaitingForClick && videoRef.current) {
+        videoRef.current.play().catch(err => console.error('Play failed:', err));
+        setIsWaitingForClick(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isWaitingForClick, requireClick]);
+
+  const handleClick = (event: React.MouseEvent) => {
     if (isWaitingForClick && videoRef.current) {
       videoRef.current.play().catch(err => console.error('Play failed:', err));
       setIsWaitingForClick(false);
@@ -71,6 +92,23 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         playsInline
         preload="auto"
       />
+      {isWaitingForClick && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'black',
+            fontSize: '50px',
+            fontFamily: 'Arial, sans-serif',
+            pointerEvents: 'none',
+            paddingBottom: '30vh',
+          }}
+        >
+          Start
+        </div>
+      )}
     </div>
   );
 };
