@@ -17,7 +17,17 @@ export const useSimulateClick = () => {
         const y = (yPercent / 100) * window.innerHeight;
 
         const target = document.elementFromPoint(x, y) as HTMLElement;
-        if (target) target.click();
+        if (target) {
+            // Create a synthetic mouse event with proper coordinates
+            const mouseEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                view: window,
+                clientX: x,
+                clientY: y,
+            });
+            target.dispatchEvent(mouseEvent);
+        }
     };
 
     useEffect(() => {
