@@ -6,7 +6,7 @@ let socket: Socket | null = null;
 export const useSimulateClick = () => {
     // Inicializace socketu jen jednou pro celou appku
     if (!socket) {
-        socket = io('http://127.0.0.1:5000', {
+        socket = io('http://127.0.0.1:8000', {
             transports: ['websocket'], // nutné pro přímý websocket, ne fallback
             reconnection: true,        // opětovné připojení při výpadku
         });
