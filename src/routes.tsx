@@ -88,6 +88,7 @@ const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Video1,
+  notFoundComponent: Video1,
 });
 
 const video2Route = createRoute({
