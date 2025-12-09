@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import {useClickAnimation} from '../hooks/useClickAnimation';
-import {useSimulateClick} from '../hooks/useSimulateClick';
 
 interface VideoPlayerProps {
   videoSrc: string;
@@ -104,9 +102,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             fontFamily: 'Arial, sans-serif',
             pointerEvents: 'none',
             paddingBottom: '30vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          Start
+          <img
+            src={'/pages/Start.jpg'}
+            alt="Start"
+            style={{ width: '15vw', height: 'auto' }}
+          />
         </div>
       )}
     </div>
