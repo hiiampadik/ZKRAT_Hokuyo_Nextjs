@@ -35,7 +35,7 @@ const Interactive4: React.FC = () => {
   useEffect(() => {
     if (visibleImages.size === 10) {
       setTimeout(() => {
-        navigate({ to: '/video5' });
+        navigate({ to: '/video8' });
       }, 500);
     }
   }, [visibleImages, navigate]);

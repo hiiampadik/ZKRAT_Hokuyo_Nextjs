@@ -51,8 +51,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           videoRef.current.play().catch(err => console.error('Play failed:', err));
           setIsWaitingForClick(false);
         } else {
-          // Second ArrowRight: navigate to /page1
-          navigate({ to: '/page1' });
+          // Second ArrowRight: navigate to /video2
+          navigate({ to: nextRoute });
         }
       }
     };

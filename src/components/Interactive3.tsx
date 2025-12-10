@@ -100,7 +100,7 @@ const Interactive3: React.FC = () => {
           if (allFlipped) {
             // Navigate after a short delay
             setTimeout(() => {
-              navigate({ to: '/video4' });
+              navigate({ to: '/video6' });
             }, 500);
           }
 

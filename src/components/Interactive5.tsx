@@ -72,7 +72,7 @@ const Interactive5: React.FC = () => {
       const allVisible = updatedImages.every(img => img.isVisible);
       if (allVisible) {
         setTimeout(() => {
-          navigate({ to: '/video6' });
+          navigate({ to: '/video10' });
         }, 500);
       }
 

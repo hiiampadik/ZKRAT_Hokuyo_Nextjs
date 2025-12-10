@@ -94,9 +94,9 @@ const Interactive: React.FC = () => {
         audio.volume = 0.4;
         audio.play().catch(err => console.error('Audio play failed:', err));
 
-        // Navigate to video2 after famfara finishes
+        // Navigate to video3 after famfara finishes
         audio.addEventListener('ended', () => {
-          navigate({ to: '/video2' });
+          navigate({ to: '/video3' });
         });
 
         famfaraAudioRef.current = audio;

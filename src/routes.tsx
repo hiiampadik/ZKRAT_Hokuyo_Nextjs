@@ -36,7 +36,7 @@ const rootRoute = createRootRoute({
 const Video1 = () => (
   <VideoPlayer
     videoSrc="/videos/krecek-4K-001FINAL.mp4"
-    nextRoute="/page1"
+    nextRoute="/video2"
     requireClick={true}
   />
 );
@@ -44,42 +44,63 @@ const Video1 = () => (
 const Video2 = () => (
   <VideoPlayer
     videoSrc="/videos/krecek-4K-002FINAL.mp4"
-    nextRoute="/page2"
+    nextRoute="/page1"
   />
 );
 
 const Video3 = () => (
   <VideoPlayer
-    videoSrc="/videos/krecek-4K-004FINAL.mp4"
-    nextRoute="/page3"
+    videoSrc="/videos/krecek-4K-003FINAL.mp4"
+    nextRoute="/video4"
   />
 );
 
 const Video4 = () => (
   <VideoPlayer
-    videoSrc="/videos/krecek-4K-005FINAL.mp4"
-    nextRoute="/page4"
+    videoSrc="/videos/krecek-4K-004FINAL.mp4"
+    nextRoute="/page2"
   />
 );
 
 const Video5 = () => (
   <VideoPlayer
-    videoSrc="/videos/krecek-4K-006FINAL.mp4"
-    nextRoute="/page5"
+    videoSrc="/videos/krecek-4K-005FINAL.mp4"
+    nextRoute="/page3"
   />
 );
 
 const Video6 = () => (
   <VideoPlayer
-    videoSrc="/videos/krecek-4K-008FINAL.mp4"
-    nextRoute="/page6"
+    videoSrc="/videos/krecek-4K-006FINAL.mp4"
+    nextRoute="/video7"
   />
 );
 
 const Video7 = () => (
   <VideoPlayer
-    videoSrc="/videos/krecek-4K-009FINAL.mp4"
-    nextRoute="/"
+    videoSrc="/videos/krecek-4K-007FINAL.mp4"
+    nextRoute="/page4"
+  />
+);
+
+const Video8 = () => (
+  <VideoPlayer
+      videoSrc="/videos/krecek-4K-008FINAL.mp4"
+      nextRoute="/video9"
+  />
+);
+
+const Video9 = () => (
+  <VideoPlayer
+      videoSrc="/videos/krecek-4K-009FINAL.mp4"
+      nextRoute="/page5"
+  />
+);
+
+const Video10 = () => (
+  <VideoPlayer
+      videoSrc="/videos/krecek-4K-010FINAL.mp4"
+      nextRoute="/page6"
   />
 );
 
@@ -127,6 +148,26 @@ const video7Route = createRoute({
   component: Video7,
 });
 
+const video8Route = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'video8',
+  component: Video8,
+});
+
+const video9Route = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'video9',
+  component: Video9,
+});
+
+const video10Route = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'video10',
+  component: Video10,
+});
+
+
+
 // Page routes
 const page1Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -167,18 +208,22 @@ const page6Route = createRoute({
 // Build the route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  page1Route,
   video2Route,
-  page2Route,
   video3Route,
-  page3Route,
   video4Route,
-  page4Route,
   video5Route,
-  page5Route,
   video6Route,
-  page6Route,
   video7Route,
+  video8Route,
+  video9Route,
+  video10Route,
+
+  page1Route,
+  page2Route,
+  page3Route,
+  page4Route,
+  page5Route,
+  page6Route,
 ]);
 
 // Create and export the router

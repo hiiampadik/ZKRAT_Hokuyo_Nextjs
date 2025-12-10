@@ -1,23 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from '@tanstack/react-router';
+import {routeOrder} from './useNumberKeyNavigation';
 
 const REDIRECT_TIMEOUT = 90 * 1000; // 90 seconds
-
-const routeOrder = [
-  '/',        // video1 (first, requires click)
-  '/page1',   // page1
-  '/video2',  // video2
-  '/page2',   // page2
-  '/video3',  // video3
-  '/page3',   // page3
-  '/video4',  // video4
-  '/page4',   // page4
-  '/video5',  // video5
-  '/page5',   // page5
-  '/video6',  // video6
-  '/page6',   // page6
-  '/video7',  // video7 (last)
-];
+const REDIRECT_TIMEOUT_LAST = 180 * 1000; // 180 seconds
 
 export const useInactivityRedirect = () => {
   const navigate = useNavigate();
@@ -36,7 +22,7 @@ export const useInactivityRedirect = () => {
 
     const timeout = setTimeout(() => {
       navigate({ to: nextRoute });
-    }, REDIRECT_TIMEOUT);
+    }, currentPath === '/page6' ? REDIRECT_TIMEOUT_LAST : REDIRECT_TIMEOUT);
 
     return () => {
       clearTimeout(timeout);

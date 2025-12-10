@@ -136,7 +136,7 @@ const Interactive6: React.FC = () => {
   // Check if 20 videos have been clicked and redirect
   useEffect(() => {
     if (clickedCount >= 20) {
-      navigate({ to: '/video7' });
+      navigate({ to: '/' });
     }
   }, [clickedCount, navigate]);
 

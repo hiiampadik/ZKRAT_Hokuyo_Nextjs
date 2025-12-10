@@ -74,7 +74,7 @@ const Interactive2: React.FC = () => {
       if (allSwapped) {
         // Small delay before navigation to let the last sound play
         setTimeout(() => {
-          navigate({ to: '/video3' });
+          navigate({ to: '/video5' });
         }, 500);
       }
 
