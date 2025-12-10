@@ -8,9 +8,9 @@ const REDIRECT_TIMEOUT_LAST = 180 * 1000; // 180 seconds
 export const useInactivityRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const currentPath = location.pathname;
 
   useEffect(() => {
-    const currentPath = location.pathname;
     const currentIndex = routeOrder.indexOf(currentPath);
 
     let nextRoute: string;
@@ -20,12 +20,14 @@ export const useInactivityRedirect = () => {
       nextRoute = routeOrder[0];
     }
 
+    const timeoutDuration = currentPath === '/page6' ? REDIRECT_TIMEOUT_LAST : REDIRECT_TIMEOUT;
+
     const timeout = setTimeout(() => {
       navigate({ to: nextRoute });
-    }, currentPath === '/page6' ? REDIRECT_TIMEOUT_LAST : REDIRECT_TIMEOUT);
+    }, timeoutDuration);
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [navigate, location.pathname]);
+  }, [currentPath, navigate]);
 };
