@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
+import { useInactivityRedirect } from '../hooks/useInactivityRedirect';
 import ClickAnimation from './ClickAnimation';
 import './Interactive4.sass';
 
@@ -12,6 +13,9 @@ const Interactive4: React.FC = () => {
 
   // Use click animation hook
   const { clickAnimations, addClickAnimation } = useClickAnimation();
+
+  // Use inactivity redirect hook - redirects to next page after 10s
+  useInactivityRedirect();
 
   // General click handler for animation
   const handleContainerClick = useCallback((event: React.MouseEvent) => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAudioPool } from '../hooks/useAudioPool';
 import { useClickAnimation } from '../hooks/useClickAnimation';
+import { useInactivityRedirect } from '../hooks/useInactivityRedirect';
 import ClickAnimation from './ClickAnimation';
 import './Interactive3.sass';
 
@@ -22,6 +23,9 @@ const Interactive3: React.FC = () => {
 
   // Use click animation hook
   const { clickAnimations, addClickAnimation } = useClickAnimation();
+
+  // Use inactivity redirect hook - redirects to next page after 10s
+  useInactivityRedirect();
 
   // Initialize coins from each folder
   useEffect(() => {
