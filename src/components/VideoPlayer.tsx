@@ -45,9 +45,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (!requireClick) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowLeft' && isWaitingForClick && videoRef.current) {
-        videoRef.current.play().catch(err => console.error('Play failed:', err));
-        setIsWaitingForClick(false);
+      if (event.key === 'ArrowRight') {
+        if (isWaitingForClick && videoRef.current) {
+          // First ArrowRight: play video
+          videoRef.current.play().catch(err => console.error('Play failed:', err));
+          setIsWaitingForClick(false);
+        } else {
+          // Second ArrowRight: navigate to /page1
+          navigate({ to: '/page1' });
+        }
       }
     };
 
@@ -56,7 +62,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isWaitingForClick, requireClick]);
+  }, [isWaitingForClick, requireClick, navigate]);
 
   const handleClick = (event: React.MouseEvent) => {
     if (isWaitingForClick && videoRef.current) {

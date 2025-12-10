@@ -6,6 +6,10 @@ export const useNumberKeyNavigation = () => {
   const location = useLocation();
 
   useEffect(() => {
+    if (location.pathname === '/') {
+      return;
+    }
+
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
         return;
