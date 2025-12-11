@@ -11,7 +11,6 @@ interface GridTile {
   row: number;
   col: number;
   hasVideo: boolean;
-  isClicked: boolean;
   showRedRectangle: boolean;
 }
 
@@ -45,7 +44,6 @@ const Interactive6: React.FC = () => {
           row,
           col,
           hasVideo: false,
-          isClicked: false,
           showRedRectangle: false,
         });
       }
@@ -72,7 +70,7 @@ const Interactive6: React.FC = () => {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setTiles(prevTiles => {
-        const emptyTiles = prevTiles.filter(tile => !tile.hasVideo && !tile.isClicked);
+        const emptyTiles = prevTiles.filter(tile => !tile.hasVideo);
         if (emptyTiles.length === 0) return prevTiles;
 
         const randomIndex = Math.floor(Math.random() * emptyTiles.length);
@@ -123,7 +121,7 @@ const Interactive6: React.FC = () => {
       setTiles(prevTiles =>
         prevTiles.map(tile =>
           tile.id === tileId
-            ? { ...tile, showRedRectangle: false, isClicked: true }
+            ? { ...tile, showRedRectangle: false}
             : tile
         )
       );
@@ -135,7 +133,7 @@ const Interactive6: React.FC = () => {
 
   // Check if 20 videos have been clicked and redirect
   useEffect(() => {
-    if (clickedCount >= 20) {
+    if (clickedCount >= 200) {
       navigate({ to: '/' });
     }
   }, [clickedCount, navigate]);
