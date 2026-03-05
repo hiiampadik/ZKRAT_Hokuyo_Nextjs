@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useClickAnimation } from '../hooks/useClickAnimation';
+import { useSimulateClick } from '../hooks/useSimulateClick';
+import ClickAnimation from './ClickAnimation';
 
 interface VideoPlayerProps {
   videoSrc: string;
@@ -15,8 +18,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isWaitingForClick, setIsWaitingForClick] = useState(requireClick);
-
-  // useSimulateClick()
+  const { clickAnimations, addClickAnimation } = useClickAnimation();
+  useSimulateClick();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -65,9 +68,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [isWaitingForClick, requireClick, navigate]);
 
   const handleClick = (event: React.MouseEvent) => {
-    if (isWaitingForClick && videoRef.current) {
-      videoRef.current.play().catch(err => console.error('Play failed:', err));
+    if (requireClick && isWaitingForClick && videoRef.current) {
+      addClickAnimation(event);
       setIsWaitingForClick(false);
+      // Synthetic clicks (from useSimulateClick) are not trusted user gestures,
+      // so start muted to bypass autoplay policy, then unmute once playing
+      const video = videoRef.current;
+      video.muted = true;
+      video.play().then(() => {
+        video.muted = false;
+      }).catch(err => console.error('Play failed:', err));
     }
   };
 
@@ -92,6 +102,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           width: '100%',
           height: '100%',
           objectFit: 'contain',
+          pointerEvents: isWaitingForClick ? 'none' : 'auto',
         }}
         playsInline
         preload="auto"
@@ -120,6 +131,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           />
         </div>
       )}
+      {clickAnimations.map((animation) => (
+        <ClickAnimation
+          key={animation.id}
+          x={animation.x}
+          y={animation.y}
+        />
+      ))}
     </div>
   );
 };
