@@ -71,13 +71,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (requireClick && isWaitingForClick && videoRef.current) {
       addClickAnimation(event);
       setIsWaitingForClick(false);
-      // Synthetic clicks (from useSimulateClick) are not trusted user gestures,
-      // so start muted to bypass autoplay policy, then unmute once playing
-      const video = videoRef.current;
-      video.muted = true;
-      video.play().then(() => {
-        video.muted = false;
-      }).catch(err => console.error('Play failed:', err));
+      videoRef.current.play().catch(err => console.error('Play failed:', err));
     }
   };
 
