@@ -51,8 +51,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       if (event.key === 'ArrowRight') {
         if (isWaitingForClick && videoRef.current) {
           // First ArrowRight: play video
-          videoRef.current.play().catch(err => console.error('Play failed:', err));
-          setIsWaitingForClick(false);
+          videoRef.current.play()
+            .then(() => setIsWaitingForClick(false))
+            .catch(err => console.error('Play failed:', err));
         } else {
           // Second ArrowRight: navigate to /video2
           navigate({ to: nextRoute });
@@ -70,8 +71,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const handleClick = (event: React.MouseEvent) => {
     if (requireClick && isWaitingForClick && videoRef.current) {
       addClickAnimation(event);
-      setIsWaitingForClick(false);
-      videoRef.current.play().catch(err => console.error('Play failed:', err));
+      videoRef.current.play()
+        .then(() => setIsWaitingForClick(false))
+        .catch(err => console.error('Play failed:', err));
     }
   };
 
@@ -119,9 +121,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           }}
         >
           <img
-            src={'/pages/Start.jpg'}
+            src={'/pages/Start2.jpg'}
             alt="Start"
-            style={{ width: '15vw', height: 'auto' }}
+            style={{ width: '30vw', height: 'auto' }}
           />
         </div>
       )}

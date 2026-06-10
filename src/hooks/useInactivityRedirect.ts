@@ -26,6 +26,7 @@ export const useInactivityRedirect = () => {
       navigate({ to: nextRoute });
     }, timeoutDuration);
 
+
     return () => {
       clearTimeout(timeout);
     };

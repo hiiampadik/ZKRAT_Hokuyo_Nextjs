@@ -62,7 +62,6 @@ export const useNumberKeyNavigation = () => {
       }
 
       // Handle arrow key navigation through the full sequence
-      // Sequence: video1 (/) → page1 → video2 → page2 → video3 → page3 → video4 → page4 → video5 → page5 → video6 → page6 → video7
 
 
       const currentPath = location.pathname;
